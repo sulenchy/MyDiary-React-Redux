@@ -1,2 +1,20 @@
+# Dependency directory
 node_modules
+
+#logs
+.DS_Store
+
+# vscode config
+.vscode
+
+# production source code
 dist
+
+# Environment variables
+.env
+
+# Coverage directory for coverage report
+coverage
+
+tests/__snapshots__
+tests/**/__snapshots__
