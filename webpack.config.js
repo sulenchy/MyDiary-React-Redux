@@ -1,5 +1,6 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack'); // to access built-in plugins
+require('dotenv').config();
 
 module.exports = {
   module: {
@@ -27,6 +28,9 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.API_BASE_URL': JSON.stringify(process.env.API_BASE_URL)
+    }),
     new HtmlWebPackPlugin({
       template: './src/index.html',
       filename: './index.html',

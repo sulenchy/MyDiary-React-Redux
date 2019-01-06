@@ -1,5 +1,5 @@
 import LandingPage from './components/home/LandingPage';
-import index from './components/index';
+import index from './components/entry/index';
 
 const routes = [
   {
