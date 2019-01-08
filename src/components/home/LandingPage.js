@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { globalFailure } from '../../actions/globalActions';
-import register from '../../actions/userActions';
+import { register, login } from '../../actions/userActions';
 
 export class LandingPage extends React.Component {
   constructor(props) {
@@ -13,10 +13,12 @@ export class LandingPage extends React.Component {
       email: '',
       gender: '',
       password: '',
-      retypePassword: ''
+      retypePassword: '',
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleRegister = this.handleRegister.bind(this);
+    this.handleModal = this.handleModal.bind(this);
+    this.handleLogin = this.handleLogin.bind(this);
   }
 
   componentDidMount() {
@@ -31,6 +33,13 @@ export class LandingPage extends React.Component {
   handleChange(event) {
     event.preventDefault();
     this.setState({ [event.target.name]: event.target.value });
+  }
+
+  /**
+   * @description - handle onClick event of the modal button
+   */
+  handleModal(param) {
+    document.getElementById('modalBox').style.display = param;
   }
 
   /**
@@ -51,11 +60,27 @@ export class LandingPage extends React.Component {
     }, history);
   }
 
+  /**
+   * @description - handles onClick event of the register form
+   * @param {*} event -
+   */
+  handleLogin(event) {
+    event.preventDefault();
+    const {
+      email, password
+    } = this.state;
+    const { failure } = this.props;
+    if (email.trim() === '' || password.trim() === '') {
+      return failure('Please provide email and password!');
+    }
+    const { loginUser, history } = this.props;
+    loginUser({
+      email, password
+    }, history);
+  }
+
   render() {
     const { isLoggedIn, errors } = this.props;
-    const {
-      fullname, email, gender, password, retypePassword
-    } = this.state;
 
     if (isLoggedIn) {
       return <Redirect to="/index" />;
@@ -70,7 +95,7 @@ export class LandingPage extends React.Component {
             <p>Getting started is only a few click away.</p>
             <div className="">
               <button type="button" className="btn responsive-btn">Learn more</button>
-              <button type="button" className="btn responsive-btn">Login</button>
+              <button type="button" className="btn responsive-btn" onClick={() => this.handleModal('block')}>Login</button>
             </div>
           </div>
         </section>
@@ -81,21 +106,21 @@ export class LandingPage extends React.Component {
             <p>Getting started is quite simple and easy. Just fill out the info below.</p>
             <form>
               <ul id="errors" className="text-red">
-                {errors ? Object.keys(errors).map((error, index) => (
+                {errors && typeof errors !== 'string' ? Object.keys(errors).map((error, index) => (
                   <li key={`error-${String(index)}`}>{errors[error][0]}</li>
                 )) : ''}
               </ul>
               <div className="input-container">
                 <i className="fa fa-user icon" />
-                <input className="input-field" type="text" id="fullname" placeholder="Full name" name="fullname" value={fullname} onChange={this.handleChange} />
+                <input className="input-field" type="text" id="fullname" placeholder="Full name" name="fullname" onChange={this.handleChange} />
               </div>
               <div className="input-container">
                 <i className="fa fa-envelope icon" />
-                <input className="input-field" type="email" placeholder="Email" id="email" name="email" value={email} onChange={this.handleChange} required />
+                <input className="input-field" type="email" placeholder="Email" id="email" name="email" onChange={this.handleChange} required />
               </div>
               <div className="input-container">
                 <i className="fa fa-intersex icon" />
-                <select className="input-field" id="gender" name="gender" onChange={this.handleChange} value={gender} required>
+                <select className="input-field" id="gender" name="gender" onChange={this.handleChange} required>
                   <option value="">Choose your gender</option>
                   <option value="Female">Female</option>
                   <option value="Male">Male</option>
@@ -103,49 +128,55 @@ export class LandingPage extends React.Component {
               </div>
               <div className="input-container">
                 <i className="fa fa-key icon" />
-                <input className="input-field" type="password" placeholder="Password" id="password" name="password" value={password} onChange={this.handleChange} required />
+                <input className="input-field" type="password" placeholder="Password" id="password" name="password" onChange={this.handleChange} required />
               </div>
               <div className="input-container">
                 <i className="fa fa-key icon" />
-                <input className="input-field" type="password" placeholder="Retype Password" id="retypePassword" name="retypePassword" value={retypePassword} onChange={this.handleChange} required />
+                <input className="input-field" type="password" placeholder="Retype Password" id="retypePassword" name="retypePassword" onChange={this.handleChange} required />
               </div>
               <button type="submit" id="register" className="btn text-center" onClick={this.handleRegister}>Register</button>
 
             </form>
             <p>
                 Already have an account?
-              <a className="#" href="#">Login</a>
+              <a className="#" href="#" onClick={() => this.handleModal('block')}>Login</a>
             </p>
           </div>
-          <div id="modalBox" className="modal">
-            <div className="modal-container">
-              <form>
-                <div className="imgcontainer">
-                  <span>&times;</span>
-                  <h2>Login</h2>
-                </div>
-                <ul id="errors_login" className="text-red" />
-                <div className="input-container">
-                  <i className="fa fa-envelope icon" />
-                  <input className="input-field" id="emailL" type="email" placeholder="Email" name="email" />
-                </div>
-
-                <div className="input-container">
-                  <i className="fa fa-key icon" />
-                  <input className="input-field" id="passwordL" type="password" placeholder="Password" name="password" />
-                </div>
-
-                <input type="button" id="login" className="btn" value="Login" />
-
-                <span className="">
-Forgot
-                  <a href="#">password?</a>
-                </span>
-
-              </form>
-            </div>
-          </div>
         </section>
+        <div id="modalBox" className="modal">
+          <div className="modal-container">
+            <form>
+              <div className="imgcontainer">
+                <button type="button" className="close" onClick={() => this.handleModal('none')}>&times;</button>
+                <h2>Login</h2>
+              </div>
+              <ul id="errors_login" className="text-red">
+                {
+                  errors && typeof errors === 'string'
+                    ? <li>{errors}</li> : ''
+                }
+              </ul>
+
+              <div className="input-container">
+                <i className="fa fa-envelope icon" />
+                <input className="input-field" type="email" placeholder="Email" name="email" onChange={this.handleChange} required />
+              </div>
+
+              <div className="input-container">
+                <i className="fa fa-key icon" />
+                <input className="input-field" type="password" placeholder="Password" name="password" onChange={this.handleChange} required />
+              </div>
+
+              <input type="submit" id="login" className="btn" value="Login" onClick={this.handleLogin} />
+              <span className="">
+Forgot
+                <a href="#">password?</a>
+              </span>
+
+            </form>
+          </div>
+        </div>
+
       </div>
     );
   }
@@ -153,10 +184,14 @@ Forgot
 
 LandingPage.propTypes = {
   isLoggedIn: PropTypes.bool.isRequired,
-  errors: PropTypes.object.isRequired,
+  errors: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]).isRequired,
   failure: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  registerUser: PropTypes.func.isRequired
+  registerUser: PropTypes.func.isRequired,
+  loginUser: PropTypes.func.isRequired
 };
 
 export const mapStateToProps = state => ({
@@ -168,6 +203,9 @@ export const mapDispatchToProps = dispatch => ({
   failure: error => dispatch(globalFailure(error)),
   registerUser: (user, history) => {
     dispatch(register(user, history));
+  },
+  loginUser: (user, history) => {
+    dispatch(login(user, history));
   }
 });
 
