@@ -4,7 +4,8 @@ export default {
     isLoading: false,
     error: {}
   },
+  userData: {
+  },
   entry: {
-    status: false
   }
 };

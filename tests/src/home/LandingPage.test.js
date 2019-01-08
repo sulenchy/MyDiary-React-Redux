@@ -1,9 +1,9 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
-import fetchMock from 'fetch-mock';
+import { shallow } from 'enzyme';
+// import fetchMock from 'fetch-mock';
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
-import { BrowserRouter as Router } from 'react-router-dom';
+// import { BrowserRouter as Router } from 'react-router-dom';
 import connectedLandingPage, { mapDispatchToProps, mapStateToProps } from '../../../src/components/home/LandingPage';
 
 const middlewares = [thunk];

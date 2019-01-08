@@ -1,7 +1,7 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import fetchMock from 'fetch-mock';
-import register from '../../../src/actions/userActions';
+import { register } from '../../../src/actions/userActions';
 import {
   REGISTER_SUCCESS,
   TRIGGER_LOADING,
