@@ -18,6 +18,24 @@ a{
     text-decoration: none;
 }
 
+.spinner-overlay {
+    background-color: rgba(255, 255, 255, 0.6);;
+    color: #007fff;
+    font-size: 1.3em;
+    height: 100%;
+    position: fixed;
+    text-align: center;
+    top: 0;
+    width: 100%;
+    z-index: 999999999999;
+}
+.spinner-overlay .fas {
+    -webkit-animation: fa-spin 1s infinite linear;
+    animation: fa-spin 1s infinite linear;
+    position: relative;
+    top: 45%;
+  }
+
 #app{
     height: 100%;
 }

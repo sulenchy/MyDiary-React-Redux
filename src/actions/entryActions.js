@@ -17,7 +17,6 @@ const getUserEntries = token => (dispatch) => {
     .then((body) => {
       if (body.status === 'failure') {
         dispatch(globalFailure(body.message));
-        dispatch(globalLoading(false));
       } else {
         dispatch(entrySuccess(body));
         dispatch(globalLoading(false));
@@ -32,7 +31,6 @@ export const addNewEntry = (entry, token) => (dispatch) => {
     .then((body) => {
       if (body.errors) {
         dispatch(globalFailure(body.errors));
-        dispatch(globalLoading(false));
       } else {
         const { entryData } = dispatch(addEntrySuccess(body));
         toastr.success(entryData.status, entryData.message);

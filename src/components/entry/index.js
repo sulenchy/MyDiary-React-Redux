@@ -3,7 +3,7 @@ import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DashBoard from './dashBoard';
-import { getUserInfo } from '../../actions/userActions';
+import { getUserInfo, logout } from '../../actions/userActions';
 import getUserEntries from '../../actions/entryActions';
 import groupBy from '../../services/groupEntries';
 
@@ -35,6 +35,7 @@ class Index extends Component {
   constructor(props) {
     super(props);
     this.state = {};
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
   componentDidMount() {
@@ -42,6 +43,11 @@ class Index extends Component {
     const { token } = JSON.parse(localStorage.getItem('user')).data;
     retrieveUserInfo(token);
     retrieveUserEntries(token);
+  }
+
+  handleLogout() {
+    const { logoutUser } = this.props;
+    logoutUser();
   }
 
 
@@ -64,7 +70,7 @@ class Index extends Component {
           <hr />
           <a id="entries" href="#">Entries</a>
           <a id="profile" href="#" onClick="userProfile();">User Profile</a>
-          <a id="logout-small" href="#" className="logout">Logout</a>
+          <a id="logout-small" href="#" className="logout" onClick={this.handleLogout}>Logout</a>
         </div>
         <div className="main-form">
           <div className="row bottom-border">
@@ -77,7 +83,7 @@ class Index extends Component {
               </h2>
             </div>
             <div className="full-width">
-              <a id="logout-big" href="#" className="right btn">Logout</a>
+              <a id="logout-big" href="#" className="right btn" onClick={this.handleLogout}>Logout</a>
             </div>
           </div>
 
@@ -107,6 +113,7 @@ Index.propTypes = {
   isLoggedIn: PropTypes.bool.isRequired,
   retrieveUserInfo: PropTypes.func.isRequired,
   retrieveUserEntries: PropTypes.func.isRequired,
+  logoutUser: PropTypes.func.isRequired,
   payload: PropTypes.object.isRequired,
   entryPayload: PropTypes.object.isRequired
 };
@@ -123,6 +130,9 @@ export const mapDispatchToProp = dispatch => ({
   },
   retrieveUserEntries: (token) => {
     dispatch(getUserEntries(token));
+  },
+  logoutUser: () => {
+    dispatch(logout());
   },
 });
 

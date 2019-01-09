@@ -13,7 +13,6 @@ export const register = (user, history) => (dispatch) => {
     .then((body) => {
       if (body.errors) {
         dispatch(globalFailure(body.errors));
-        dispatch(globalLoading(false));
       } else {
         const { userData } = dispatch(success(body));
         toastr.success(userData.status, userData.message);
@@ -25,6 +24,13 @@ export const register = (user, history) => (dispatch) => {
     });
 };
 
+
+export const logout = () => (dispatch) => {
+  dispatch(globalLoading(true));
+  dispatch(globalLoggedIn(false));
+  dispatch(globalLoading(false));
+};
+
 export const getUserInfo = token => (dispatch) => {
   dispatch(globalLoading(true));
   return fetch(`${process.env.API_BASE_URL}/user`, requestOptions(null, 'GET', token))
@@ -34,7 +40,6 @@ export const getUserInfo = token => (dispatch) => {
     .then((body) => {
       if (body.status === 'failure') {
         dispatch(globalFailure(body.message));
-        dispatch(globalLoading(false));
       } else {
         dispatch(userInfoSuccess(body));
         dispatch(globalLoading(false));
@@ -49,7 +54,6 @@ export const login = (user, history) => (dispatch) => {
     .then((body) => {
       if (body.status === 'failure') {
         dispatch(globalFailure(body.message));
-        dispatch(globalLoading(false));
       } else {
         const { userData } = dispatch(success(body));
         localStorage.setItem('user', JSON.stringify(userData));
