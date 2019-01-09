@@ -3,6 +3,7 @@
 @import url('https://fonts.googleapis.com/css?family=PT+Sans');
 @import url('https://fonts.googleapis.com/css?family=Tangerine');
 @import url('https://fonts.googleapis.com/css?family=Coda+Caption:800');
+@import 'react-redux-toastr/src/styles/index';
 
 body, html {
     height: 100%;
@@ -22,6 +23,10 @@ li{
 
 a{
     text-decoration: none;
+}
+
+time {
+    font-size: 40px;
 }
 
 .spinner-overlay {
@@ -94,7 +99,14 @@ nav a, button{
 .input-field {
     width: 100%;
     padding: 10px;
+    font-size: 14px;
     outline: none;
+}
+select {
+    height: 40px;
+    border-radius: 0px;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0px;
 }
 
 .input-field:focus {

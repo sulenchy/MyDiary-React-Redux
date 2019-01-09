@@ -87,6 +87,7 @@ export class LandingPage extends React.Component {
     }
 
     return (
+      
       <div className="main">
         <section id="right" className="about bg">
           <div id="overlay" className="story-section">
@@ -95,7 +96,7 @@ export class LandingPage extends React.Component {
             <p>Getting started is only a few click away.</p>
             <div className="">
               <button type="button" className="btn responsive-btn">Learn more</button>
-              <button type="button" className="btn responsive-btn" onClick={() => this.handleModal('block')}>Login</button>
+              <button type="button" id="handelModal" className="btn responsive-btn" onClick={() => this.handleModal('block')}>Login</button>
             </div>
           </div>
         </section>
@@ -139,7 +140,7 @@ export class LandingPage extends React.Component {
             </form>
             <p>
                 Already have an account?
-              <a className="#" href="#" onClick={() => this.handleModal('block')}>Login</a>
+              <a className="#" href="#" id="openLogin" onClick={() => this.handleModal('block')}>Login</a>
             </p>
           </div>
         </section>
@@ -147,7 +148,7 @@ export class LandingPage extends React.Component {
           <div className="modal-container">
             <form>
               <div className="imgcontainer">
-                <button type="button" className="close" onClick={() => this.handleModal('none')}>&times;</button>
+                <button type="button" id="closeLoginModal" className="close" onClick={() => this.handleModal('none')}>&times;</button>
                 <h2>Login</h2>
               </div>
               <ul id="errors_login" className="text-red">

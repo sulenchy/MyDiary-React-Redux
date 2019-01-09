@@ -7,23 +7,27 @@ import {
 import {
   REGISTER_SUCCESS,
   TRIGGER_LOADING,
+  TRIGGER_LOGGEDIN, GET_USER_ENTRIES, GET_USER_INFO
 } from '../../../src/actions/actionTypes';
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
 const userDetails = {
-  fullname: 'do something',
-  email: 'aghs@hghd.com',
-  gender: 'male',
-  password: '12345678'
+  user: {
+    fullname: 'do something',
+    email: 'aghs@hghd.com',
+    gender: 'male',
+    password: '12345678',
+    token: 'dsgcjhgdkshjbhjbsjcbsd'
+  }
 };
 
 const history = {
   push: jest.fn()
 };
 
-const token = 'hgdgbbhdgv.dgfvdv.edyfd';
+// const token = 'hgdgbbhdgv.dgfvdv.edyfd';
 
 describe('UserAction test', () => {
   afterEach(() => {
@@ -75,14 +79,16 @@ describe('UserAction test', () => {
 
   it('testing logout action creator', () => {
     const expectedActions = [
-      { isLoading: true, type: 'TRIGGER_LOADING' },
-      { isLoggedIn: false, type: 'TRIGGER_LOGGEDIN' },
+      { isLoading: true, type: TRIGGER_LOADING },
+      { isLoggedIn: false, type: TRIGGER_LOGGEDIN },
+      { type: GET_USER_INFO, userData: {} },
+      { entryData: {}, type: GET_USER_ENTRIES },
       { isLoading: false, type: TRIGGER_LOADING },
     ];
 
     const store = mockStore({ global: {} });
 
-    store.dispatch(logout());
+    store.dispatch(logout(history));
     expect(store.getActions()).toEqual(expectedActions);
   });
 
@@ -90,7 +96,7 @@ describe('UserAction test', () => {
   it('testing getUserInfo actionCreator on successs', (done) => {
     fetchMock.getOnce(`${process.env.API_BASE_URL}/user`, {
       body: entry,
-      headers: { 'content-type': 'application/json', token }
+      headers: { 'content-type': 'application/json' }
     });
 
     const expectedActions = [
@@ -132,14 +138,22 @@ describe('UserAction test', () => {
   });
 
   it('tesing login action action creator on success', (done) => {
+    const loginUserObject = {
+      data: {
+        user: {
+          ...userDetails
+        },
+        token: userDetails.token,
+      }
+    };
     fetchMock.post(`${process.env.API_BASE_URL}/auth/login`, {
-      body: userDetails,
+      body: loginUserObject,
       headers: { 'content-type': 'application/json' }
     });
 
     const expectedActions = [
       { isLoading: true, type: 'TRIGGER_LOADING' },
-      { type: REGISTER_SUCCESS, userData: userDetails },
+      { type: REGISTER_SUCCESS, userData: loginUserObject },
       { isLoading: false, type: TRIGGER_LOADING },
       { isLoggedIn: true, type: 'TRIGGER_LOGGEDIN' }
     ];

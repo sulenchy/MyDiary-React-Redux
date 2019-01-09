@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Clock from 'react-live-clock';
 import { globalFailure } from '../../actions/globalActions';
 import { addNewEntry } from '../../actions/entryActions';
-import StartTime from '../../services/time';
 
 class DashBoard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0,
+      value: 1,
       title: '',
       content: ''
     };
@@ -18,12 +18,6 @@ class DashBoard extends Component {
     this.handleCreateEntry = this.handleCreateEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleCreateEntry = this.handleCreateEntry.bind(this);
-    this._changeTime();
-  }
-
-  componentDidMount() {
-    const { failure } = this.props;
-    failure({});
   }
 
   /**
@@ -44,31 +38,28 @@ class DashBoard extends Component {
     }
   }
 
-  _changeTime() {
-    const { value } = this.state;
-    this.setState({ value: value + 1 });
-    setTimeout(this._changeTime.bind(this), 1000);
-  }
-
   handleCreateEntry(event) {
     event.preventDefault();
-    const { token } = JSON.parse(localStorage.getItem('user')).data;
+    const { token } = JSON.parse(localStorage.getItem('user'));
     const {
       title, content
     } = this.state;
     const { failure } = this.props;
     if (title.trim() === '' || content.trim() === '') {
-      return failure('Please enter the title and the content of the entry');
+      return failure('The title and content are required');
     }
     const { createEntry } = this.props;
     createEntry({
       title, content
     }, token);
+    this.setState({ title: '', content: '' });
+    document.getElementById('addNewEntry').reset();
   }
-
 
   render() {
     const { entryPayload, errors } = this.props;
+    const { value } = this.state;
+
     return (
       <div id="dashboard" className="container">
         <div className="card-dash col-1-3">
@@ -82,16 +73,17 @@ class DashBoard extends Component {
           </h2>
         </div>
         <div className="card-dash col-1-3">
-          <h2 id="txt">{StartTime()}</h2>
+          <Clock format="HH:mm:ss" ticking timezone="US/Pacific" />
         </div>
         <div id="modalBox" className="modal">
           <div className="modal-container">
             <div id="modal-app">
-              <form>
+              <form id="addNewEntry">
                 <div className="imgcontainer">
                   <button type="button" onClick={this.handleModal} className="close" title="Close Modal">&times;</button>
                   <h2>Add Entry</h2>
                 </div>
+
                 <ul id="errors_login" className="text-red">
                   {
                   errors && typeof errors === 'string'
@@ -121,14 +113,14 @@ DashBoard.propTypes = {
     PropTypes.object
   ]).isRequired,
   failure: PropTypes.func.isRequired,
-  createEntry: PropTypes.func.isRequired,
+  createEntry: PropTypes.func.isRequired
 };
 
 export const mapStateToProps = state => ({
   isLoggedIn: state.globalreducer.isLoggedIn,
   payload: state.userReducer.payload,
   entryPayload: state.entryReducer,
-  errors: state.globalreducer.error,
+  errors: state.globalreducer.error
 });
 export const mapDispatchToProps = dispatch => ({
   failure: error => dispatch(globalFailure(error)),

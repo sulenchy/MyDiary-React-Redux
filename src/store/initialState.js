@@ -2,10 +2,13 @@ export default {
   global: {
     isLoggedIn: false,
     isLoading: false,
-    error: {}
+    error: {},
+    toggle: false
   },
   user: {
-    payload: {}
+    payload: {
+
+    }
   },
   entry: {
     payload: {

@@ -1,12 +1,10 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-// import fetchMock from 'fetch-mock';
-import thunk from 'redux-thunk';
+import Enzyme, { shallow, mount } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 import configureMockStore from 'redux-mock-store';
-// import { BrowserRouter as Router } from 'react-router-dom';
 import connectedLandingPage, { LandingPage, mapDispatchToProps, mapStateToProps } from '../../../src/components/home/LandingPage';
 
-const middlewares = [thunk];
+Enzyme.configure({ adapter: new Adapter() });
 
 const initialState = {
   global: {
@@ -22,7 +20,8 @@ function setup() {
     errors: {},
     failure: jest.fn,
     history: {},
-    registerUser: jest.fn()
+    registerUser: jest.fn(),
+    loginUser: jest.fn()
   };
 
   const mockStore = configureMockStore();
@@ -30,7 +29,7 @@ function setup() {
   const store = mockStore(initialState);
   const connectedLandingWrapper = shallow(<connectedLandingPage {...props} store={store} />);
 
-  const landingPage = shallow(<LandingPage {...props} />);
+  const landingPage = mount(<LandingPage {...props} />, { attachTo: document.body });
 
   return {
     props,
@@ -43,11 +42,11 @@ const { connectedLandingWrapper } = setup();
 const { landingPage } = setup();
 
 describe('Testing connectedArticlePage', () => {
-  test('shallow test', () => {
+  it('shallow test', () => {
     expect(connectedLandingWrapper).toMatchSnapshot();
   });
 
-  test('testing mapStateToProps', () => {
+  it('testing mapStateToProps', () => {
     const innerState = {
       globalreducer: {
         isLoggedIn: false,
@@ -60,21 +59,49 @@ describe('Testing connectedArticlePage', () => {
     });
   });
 
-  test('testing mapDispatchToProps', () => {
+  it('testing mapDispatchToProps', () => {
     const dispatch = jest.fn(() => {});
     mapDispatchToProps(dispatch).registerUser({});
     expect(dispatch.mock.calls.length).toBe(1);
   });
-  test('testing mapDispatchToProps', () => {
+
+  it('testing mapDispatchToProps', () => {
     const dispatch = jest.fn(() => {});
     mapDispatchToProps(dispatch).failure({});
     expect(dispatch.mock.calls.length).toBe(1);
   });
+
+  it('testing mapDispatchToProps', () => {
+    const dispatch = jest.fn(() => {});
+    mapDispatchToProps(dispatch).loginUser({});
+    expect(dispatch.mock.calls.length).toBe(1);
+  });
 });
 
-describe('testing unconnected component', () => {
-  test('shallow test', () => {
+describe('testing unconnected component 1', () => {
+  it('shallow test', () => {
     expect(landingPage).toMatchSnapshot();
     landingPage.instance().handleChange({ preventDefault: jest.fn(), target: { name: 'email', value: 'sulenchy@yahoo.com' } });
+  });
+});
+
+describe('testing unconnected component 2', () => {
+  it('testing handleModal', () => {
+    const button = landingPage.find('#handelModal');
+    button.props().onClick('');
+    const openLogin = landingPage.find('#openLogin');
+    openLogin.props().onClick('');
+    const closeLoginModal = landingPage.find('#closeLoginModal');
+    closeLoginModal.props().onClick('');
+  });
+
+  it('testing handleRegister', () => {
+    const buttonRegister = landingPage.find('#register');
+    buttonRegister.props().onClick({ preventDefault: jest.fn() });
+  });
+
+  it('testing handleLogin', () => {
+    const buttonLogin = landingPage.find('#login');
+    buttonLogin.props().onClick({ preventDefault: jest.fn() });
   });
 });

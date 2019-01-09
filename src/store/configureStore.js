@@ -3,7 +3,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
-import logger from 'redux-logger';
+// import logger from 'redux-logger';
 import rootReducer from '../reducers/rootReducer';
 
 const composeEnhancers = composeWithDevTools({});
@@ -17,7 +17,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const configureStore = () => createStore(
   persistedReducer,
-  composeEnhancers(applyMiddleware(thunk, logger)),
+  composeEnhancers(applyMiddleware(thunk)),
 );
 
 export default configureStore;

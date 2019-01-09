@@ -4,11 +4,11 @@ import requestOptions from '../utils/requestOptions';
 import { globalLoading, globalFailure } from './globalActions';
 
 
-const entrySuccess = entryData => ({ type: GET_USER_ENTRIES, entryData });
-const addEntrySuccess = entryData => ({ type: ADD_NEW_ENTRY_SUCCESS, entryData });
+export const entrySuccess = entryData => ({ type: GET_USER_ENTRIES, entryData });
+export const addEntrySuccess = entryData => ({ type: ADD_NEW_ENTRY_SUCCESS, entryData });
 
 
-const getUserEntries = token => (dispatch) => {
+export const getUserEntries = token => (dispatch) => {
   dispatch(globalLoading(true));
   return fetch(`${process.env.API_BASE_URL}/entries`, requestOptions(null, 'GET', token))
     .then(
@@ -17,6 +17,7 @@ const getUserEntries = token => (dispatch) => {
     .then((body) => {
       if (body.status === 'failure') {
         dispatch(globalFailure(body.message));
+        toastr.error('No Entry', 'No entry. Please add new entry');
       } else {
         dispatch(entrySuccess(body));
         dispatch(globalLoading(false));
@@ -32,9 +33,10 @@ export const addNewEntry = (entry, token) => (dispatch) => {
       if (body.errors) {
         dispatch(globalFailure(body.errors));
       } else {
-        const { entryData } = dispatch(addEntrySuccess(body));
-        toastr.success(entryData.status, entryData.message);
+        dispatch(addEntrySuccess(body));
+        toastr.success('New Entry', 'New entry added successfully');
         dispatch(globalLoading(false));
+        dispatch(globalFailure({}));
       }
     });
 };
