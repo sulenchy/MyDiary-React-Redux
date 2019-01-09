@@ -7,6 +7,7 @@ import NotFound from './components/NotFound';
 import Spinner from './components/common/spinner';
 import { persistor, store } from './store/store';
 import routes from './routes';
+import '../public/styles/main.scss';
 
 class App extends Component {
   constructor(props) {
