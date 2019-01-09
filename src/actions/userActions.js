@@ -4,7 +4,7 @@ import requestOptions from '../utils/requestOptions';
 import { globalLoading, globalLoggedIn, globalFailure } from './globalActions';
 
 const success = userData => ({ type: REGISTER_SUCCESS, userData });
-const userInfoSuccess = () => ({ type: GET_USER_INFO });
+const userInfoSuccess = userData => ({ type: GET_USER_INFO, userData });
 
 export const register = (user, history) => (dispatch) => {
   dispatch(globalLoading(true));
@@ -16,8 +16,8 @@ export const register = (user, history) => (dispatch) => {
         dispatch(globalLoading(false));
       } else {
         const { userData } = dispatch(success(body));
-        // localStorage.setItem('user', JSON.stringify(userData));
         toastr.success(userData.status, userData.message);
+        localStorage.setItem('user', JSON.stringify(userData));
         history.push('/index');
         dispatch(globalLoading(false));
         return dispatch(globalLoggedIn(true));
@@ -25,10 +25,8 @@ export const register = (user, history) => (dispatch) => {
     });
 };
 
-export const getUserInfo = () => (dispatch) => {
+export const getUserInfo = token => (dispatch) => {
   dispatch(globalLoading(true));
-  const { token } = localStorage.getItem('user');
-  console.log(token, 'token from getUserInfo');
   return fetch(`${process.env.API_BASE_URL}/user`, requestOptions(null, 'GET', token))
     .then(
       res => res.json()
@@ -38,7 +36,7 @@ export const getUserInfo = () => (dispatch) => {
         dispatch(globalFailure(body.message));
         dispatch(globalLoading(false));
       } else {
-        dispatch(userInfoSuccess());
+        dispatch(userInfoSuccess(body));
         dispatch(globalLoading(false));
       }
     });
@@ -49,7 +47,6 @@ export const login = (user, history) => (dispatch) => {
   return fetch(`${process.env.API_BASE_URL}/auth/login`, requestOptions(user, 'POST', null))
     .then(res => res.json())
     .then((body) => {
-      console.log(body);
       if (body.status === 'failure') {
         dispatch(globalFailure(body.message));
         dispatch(globalLoading(false));

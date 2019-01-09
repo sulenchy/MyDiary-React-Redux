@@ -2,88 +2,55 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import DashBoard from './dashBoard';
+import { getUserInfo } from '../../actions/userActions';
+import getUserEntries from '../../actions/entryActions';
+import groupBy from '../../services/groupEntries';
 
-class DashBoard extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-    this.handleModal = this.handleModal.bind(this);
-  }
-
-  handleModal() {
-    const modal = document.getElementById('modalBox');
-    if (modal.style.display !== 'block') {
-      modal.style.display = 'block';
-    } else {
-      modal.style.display = 'none';
-    }
-  }
-
-  render() {
-    return (
-      <div id="dashboard" className="container">
-        <div className="card-dash col-1-3">
-          <h2>Total entry</h2>
-          <h2>2</h2>
+const EntryCard = (props) => {
+  const { data } = props;
+  return (
+    <Link to="#" className="entrygroup">
+      <div className="card row-entry">
+        <div className="day">
+          <h2>{data.entry}</h2>
         </div>
-        <div className="card-dash col-1-3">
-          <h2>Add New</h2>
+        <div className="entry">
           <h2>
-            <Link to="#" onClick={this.handleModal}><i className="fas fa-plus-circle" id="add-new" /></Link>
+            {data.length}
+            {' '}
+            entry
           </h2>
         </div>
-        <div className="card-dash col-1-3">
-          <h2 id="txt">12:50:00</h2>
-        </div>
-        <div id="modalBox" className="modal">
-          <div className="modal-container">
-            <div id="modal-app">
-              <form>
-                <div className="imgcontainer">
-                  <button type="button" onClick={this.handleModal} className="close" title="Close Modal">&times;</button>
-                  <h2>Add Entry</h2>
-                </div>
-                <ul id="add_new_error" className="text-red" />
-                <div className="input-container">
-                  <input className="input-field" id="title" type="text" placeholder="Entry Title" />
-                </div>
-                <div className="input-container">
-                  <textarea rows="4" className="input-field" id="content" placeholder="Entry content" />
-                </div>
-                <button type="submit" className="btn" id="file-submit1" onClick="addNewEntry();">Save</button>
-              </form>
-            </div>
-          </div>
-        </div>
       </div>
-    );
-  }
+    </Link>
+  );
+};
+
+EntryCard.propTypes = {
+  data: PropTypes.object.isRequired
 }
 
-const EntryCard = () => (
-  <Link to="#" className="entrygroup">
-    <div className="card row-entry">
-      <div className="day">
-        <h2>Sep 20, 2018</h2>
-      </div>
-      <div className="entry">
-        <h2>1  entry</h2>
-      </div>
-    </div>
-  </Link>
-);
-
-class Index extends React.Component {
+class Index extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
 
-  render() {
-    const { isLoggedIn } = this.props;
-    console.log(this.props)
-    console.log(isLoggedIn)
+  componentDidMount() {
+    const { retrieveUserInfo, retrieveUserEntries } = this.props;
+    const { token } = JSON.parse(localStorage.getItem('user')).data;
+    retrieveUserInfo(token);
+    retrieveUserEntries(token);
+  }
 
+
+  render() {
+    const { isLoggedIn, payload, entryPayload } = this.props;
+    let entries = {};
+    if (entryPayload.payload.entries) {
+      entries = groupBy(entryPayload.payload.entries, 'date');
+    }
     if (!isLoggedIn) {
       return <Redirect to="/" />;
     }
@@ -92,9 +59,8 @@ class Index extends React.Component {
         <div id="mySidenav" className="sidenav">
           {/* <a href="javascript:void(0)" className="closebtn" onClick="closeNav()">&times;</a> */}
 
-          <a href="#" id="profile-pic"><img className="img-center" id="img-element" alt="Avatar" /></a>
-
-          {/* <a id="username" href="#" /> */}
+          <a href="#" id="profile-pic"><img className="img-center" id="img-element" alt="Avatar" src={payload.user ? payload.user[0].passporturl : '#'} /></a>
+          <a id="username" href="#">{payload.user ? payload.user[0].fullname : ''}</a>
           <hr />
           <a id="entries" href="#">Entries</a>
           <a id="profile" href="#" onClick="userProfile();">User Profile</a>
@@ -120,7 +86,12 @@ class Index extends React.Component {
             <div className="container">
               <h2>Entries in Days</h2>
               <input type="text" className="input-field" id="search" placeholder="Search" name="search" />
-              <EntryCard />
+              {Object.keys(entries).map((entry) => {
+                const { length } = entries[entry];
+                const entryDetail = { length, entry };
+                return <EntryCard data={entryDetail} />;
+              })}
+
             </div>
 
           </div>
@@ -134,10 +105,25 @@ class Index extends React.Component {
 
 Index.propTypes = {
   isLoggedIn: PropTypes.bool.isRequired,
+  retrieveUserInfo: PropTypes.func.isRequired,
+  retrieveUserEntries: PropTypes.func.isRequired,
+  payload: PropTypes.object.isRequired,
+  entryPayload: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
   isLoggedIn: state.globalreducer.isLoggedIn,
+  payload: state.userReducer.payload,
+  entryPayload: state.entryReducer
 });
 
-export default connect(mapStateToProps)(Index);
+export const mapDispatchToProp = dispatch => ({
+  retrieveUserInfo: (token) => {
+    dispatch(getUserInfo(token));
+  },
+  retrieveUserEntries: (token) => {
+    dispatch(getUserEntries(token));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProp)(Index);

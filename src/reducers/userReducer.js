@@ -1,19 +1,23 @@
 import initialState from '../store/initialState';
 import {
-  GET_USER_INFO, UPDATE_USER_INFO
+  GET_USER_INFO, UPDATE_USER_INFO, REGISTER_SUCCESS
 } from '../actions/actionTypes';
 
-const { userData } = initialState;
-const userReducer = (state = userData, action) => {
+const { user } = initialState;
+const userReducer = (state = user, action) => {
   const { type } = action;
   switch (type) {
     case GET_USER_INFO:
       return {
-        ...state, userData: action.userData
+        ...state, payload: action.userData
       };
     case UPDATE_USER_INFO:
       return {
-        ...state, userData: action.userData
+        ...state, payload: action.userData
+      };
+    case REGISTER_SUCCESS:
+      return {
+        ...state, payload: action.userData
       };
     default:
       return state;

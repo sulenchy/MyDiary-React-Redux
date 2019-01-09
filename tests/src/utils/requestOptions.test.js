@@ -8,7 +8,7 @@ describe('TEST request options function', () => {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        authorization: undefined,
+        token: undefined,
       },
       body: null
     });
@@ -21,7 +21,7 @@ describe('TEST request options function', () => {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        authorization: '82635t378046317461934',
+        token: '82635t378046317461934',
       },
       body: JSON.stringify({ user: { name: 'Chris Akanmu' } })
     });
