@@ -2,7 +2,7 @@ import initialState from '../store/initialState';
 import {
   TRIGGER_LOGGEDIN,
   TRIGGER_FAILURE,
-  TRIGGER_LOADING,
+  TRIGGER_LOADING
 } from '../actions/actionTypes';
 
 const { global } = initialState;

@@ -4,7 +4,7 @@ import { shallow } from 'enzyme';
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
 // import { BrowserRouter as Router } from 'react-router-dom';
-import connectedLandingPage, { mapDispatchToProps, mapStateToProps } from '../../../src/components/home/LandingPage';
+import connectedLandingPage, { LandingPage, mapDispatchToProps, mapStateToProps } from '../../../src/components/home/LandingPage';
 
 const middlewares = [thunk];
 
@@ -30,16 +30,17 @@ function setup() {
   const store = mockStore(initialState);
   const connectedLandingWrapper = shallow(<connectedLandingPage {...props} store={store} />);
 
-  // const landingPage = shallow(<LandingPage {...props} />);
+  const landingPage = shallow(<LandingPage {...props} />);
 
   return {
     props,
-    connectedLandingWrapper
+    connectedLandingWrapper,
+    landingPage
   };
 }
 
 const { connectedLandingWrapper } = setup();
-// const { landingPage } = setup();
+const { landingPage } = setup();
 
 describe('Testing connectedArticlePage', () => {
   test('shallow test', () => {
@@ -68,5 +69,12 @@ describe('Testing connectedArticlePage', () => {
     const dispatch = jest.fn(() => {});
     mapDispatchToProps(dispatch).failure({});
     expect(dispatch.mock.calls.length).toBe(1);
+  });
+});
+
+describe('testing unconnected component', () => {
+  test('shallow test', () => {
+    expect(landingPage).toMatchSnapshot();
+    landingPage.instance().handleChange({ preventDefault: jest.fn(), target: { name: 'email', value: 'sulenchy@yahoo.com' } });
   });
 });
