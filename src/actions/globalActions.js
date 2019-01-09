@@ -1,7 +1,7 @@
 import {
   TRIGGER_LOGGEDIN,
   TRIGGER_FAILURE,
-  TRIGGER_LOADING
+  TRIGGER_LOADING,
 } from './actionTypes';
 
 export const globalLoading = isLoading => ({

@@ -4,8 +4,11 @@ export default {
     isLoading: false,
     error: {}
   },
-  userData: {
+  user: {
+    payload: {}
   },
   entry: {
+    payload: {
+    }
   }
 };

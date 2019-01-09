@@ -1,9 +1,9 @@
-const requestOptions = (body, method, authorization) => ({
+const requestOptions = (body, method, token) => ({
   method,
   headers: {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
-    authorization,
+    token,
   },
   body: body ? JSON.stringify(body) : null
 });
