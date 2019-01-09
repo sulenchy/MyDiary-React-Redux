@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { globalFailure } from '../../actions/globalActions';
+import { addNewEntry } from '../../actions/entryActions';
 import StartTime from '../../services/time';
 
 class DashBoard extends Component {
@@ -9,9 +11,28 @@ class DashBoard extends Component {
     super(props);
     this.state = {
       value: 0,
+      title: '',
+      content: ''
     };
     this.handleModal = this.handleModal.bind(this);
+    this.handleCreateEntry = this.handleCreateEntry.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleCreateEntry = this.handleCreateEntry.bind(this);
     this._changeTime();
+  }
+
+  componentDidMount() {
+    const { failure } = this.props;
+    failure({});
+  }
+
+  /**
+   * @description - handles onchange event
+   * @param {*} event -
+   */
+  handleChange(event) {
+    event.preventDefault();
+    this.setState({ [event.target.name]: event.target.value });
   }
 
   handleModal() {
@@ -29,9 +50,25 @@ class DashBoard extends Component {
     setTimeout(this._changeTime.bind(this), 1000);
   }
 
+  handleCreateEntry(event) {
+    event.preventDefault();
+    const { token } = JSON.parse(localStorage.getItem('user')).data;
+    const {
+      title, content
+    } = this.state;
+    const { failure } = this.props;
+    if (title.trim() === '' || content.trim() === '') {
+      return failure('Please enter the title and the content of the entry');
+    }
+    const { createEntry } = this.props;
+    createEntry({
+      title, content
+    }, token);
+  }
+
 
   render() {
-    const { entryPayload } = this.props;
+    const { entryPayload, errors } = this.props;
     return (
       <div id="dashboard" className="container">
         <div className="card-dash col-1-3">
@@ -55,14 +92,19 @@ class DashBoard extends Component {
                   <button type="button" onClick={this.handleModal} className="close" title="Close Modal">&times;</button>
                   <h2>Add Entry</h2>
                 </div>
-                <ul id="add_new_error" className="text-red" />
+                <ul id="errors_login" className="text-red">
+                  {
+                  errors && typeof errors === 'string'
+                    ? <li>{errors}</li> : ''
+                }
+                </ul>
                 <div className="input-container">
-                  <input className="input-field" id="title" type="text" placeholder="Entry Title" />
+                  <input className="input-field" id="title" name="title" type="text" placeholder="Entry Title" onChange={this.handleChange} required />
                 </div>
                 <div className="input-container">
-                  <textarea rows="4" className="input-field" id="content" placeholder="Entry content" />
+                  <textarea rows="4" className="input-field" name="content" id="content" onChange={this.handleChange} placeholder="Entry content" />
                 </div>
-                <button type="submit" className="btn" id="file-submit1" onClick="addNewEntry();">Save</button>
+                <button type="submit" className="btn" id="file-submit1" onClick={this.handleCreateEntry}>Save</button>
               </form>
             </div>
           </div>
@@ -73,13 +115,26 @@ class DashBoard extends Component {
 }
 
 DashBoard.propTypes = {
-  entryPayload: PropTypes.object.isRequired
+  entryPayload: PropTypes.object.isRequired,
+  errors: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]).isRequired,
+  failure: PropTypes.func.isRequired,
+  createEntry: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+export const mapStateToProps = state => ({
   isLoggedIn: state.globalreducer.isLoggedIn,
   payload: state.userReducer.payload,
-  entryPayload: state.entryReducer
+  entryPayload: state.entryReducer,
+  errors: state.globalreducer.error,
+});
+export const mapDispatchToProps = dispatch => ({
+  failure: error => dispatch(globalFailure(error)),
+  createEntry: (entry, token) => {
+    dispatch(addNewEntry(entry, token));
+  }
 });
 
-export default connect(mapStateToProps)(DashBoard);
+export default connect(mapStateToProps, mapDispatchToProps)(DashBoard);
