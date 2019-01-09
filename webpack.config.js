@@ -1,42 +1,49 @@
-const HtmlWebPackPlugin = require('html-webpack-plugin');
-const webpack = require('webpack'); // to access built-in plugins
-require('dotenv').config();
+const precss = require('precss');
+const autoprefixer = require('autoprefixer');
+const path = require('path');
+const merge = require('webpack-merge');
+const webpack = require('webpack');
+const common = require('./webpack.common.js');
 
-module.exports = {
+module.exports = merge(common, {
+  devtool: 'source-map',
+  mode: 'development',
   module: {
     rules: [
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-        },
-      },
-      {
-        test: /\.htnml$/,
+        test: /\.(s*)css$/,
         use: [
           {
-            loader: 'html-loader',
+            loader: 'style-loader'
           },
-        ],
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: ['eslint-loader'],
-      },
-    ],
+          {
+            loader: 'css-loader'
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins() {
+                return [
+                  precss,
+                  autoprefixer
+                ];
+              }
+            }
+          },
+          {
+            loader: 'sass-loader'
+          }
+        ]
+      }
+    ]
   },
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env.API_BASE_URL': JSON.stringify(process.env.API_BASE_URL)
-    }),
-    new HtmlWebPackPlugin({
-      template: './src/index.html',
-      filename: './index.html',
-    }),
+    new webpack.HotModuleReplacementPlugin()
   ],
   devServer: {
+    contentBase: path.join(__dirname, 'src', 'index.html'),
+    port: 8080,
     historyApiFallback: true,
+    hot: true
   },
-};
+});
