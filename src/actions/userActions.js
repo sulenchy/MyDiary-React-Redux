@@ -12,6 +12,7 @@ export const register = (user, history) => (dispatch) => {
     .then(res => res.json())
     .then((body) => {
       if (body.errors) {
+        dispatch(globalLoading(false));
         dispatch(globalFailure(body.errors));
       } else {
         const { userData } = dispatch(success(body));
@@ -21,6 +22,10 @@ export const register = (user, history) => (dispatch) => {
         dispatch(globalLoading(false));
         return dispatch(globalLoggedIn(true));
       }
+    })
+    .catch((err) => {
+      dispatch(globalLoading(false));
+      dispatch(globalFailure(err));
     });
 };
 
@@ -44,6 +49,10 @@ export const getUserInfo = token => (dispatch) => {
         dispatch(userInfoSuccess(body));
         dispatch(globalLoading(false));
       }
+    })
+    .catch((err) => {
+      dispatch(globalLoading(false));
+      dispatch(globalFailure(err));
     });
 };
 
@@ -62,5 +71,9 @@ export const login = (user, history) => (dispatch) => {
         dispatch(globalLoggedIn(true));
         return history.push('/index');
       }
+    })
+    .catch((err) => {
+      dispatch(globalLoading(false));
+      dispatch(globalFailure(err));
     });
 };

@@ -97,6 +97,7 @@ export class LandingPage extends React.Component {
               <button type="button" className="btn responsive-btn">Learn more</button>
               <button type="button" className="btn responsive-btn" onClick={() => this.handleModal('block')}>Login</button>
             </div>
+            <div><span>Sorry for any inconvinence we may have cause you. We are currently facing a deployment issue. The heroku-16 stack has reached end of life and we are upgrading to the latest stack. Thank you</span></div>
           </div>
         </section>
         <section id="left" className="register container">
