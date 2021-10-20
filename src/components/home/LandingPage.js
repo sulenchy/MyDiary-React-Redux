@@ -27,10 +27,21 @@ export class LandingPage extends React.Component {
   componentDidMount() {
     const { failure } = this.props;
     failure({});
+    window.addEventListener('click', (event) => {
+      if (event.target.id === 'modalBox') {
+        this.toggleModal();
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('click');
   }
 
   toggleModal() {
     this.setState(state => ({ isOpen: !state.isOpen }));
+    const { failure } = this.props;
+    failure({});
   }
 
   /**
@@ -73,6 +84,7 @@ export class LandingPage extends React.Component {
    */
   handleLogin(event) {
     event.preventDefault();
+    event.stopPropagation();
     const {
       email, password
     } = this.state;
@@ -99,11 +111,11 @@ export class LandingPage extends React.Component {
         <section id="right" className="about bg">
           <div id="overlay" className="story-section">
             <h1>My Dairy.</h1>
-            <h1>Your space to capture your thoughts and feelings.</h1>
+            <h1>A space to capture your thoughts and feelings.</h1>
             <p>Getting started is only a few click away.</p>
             <div className="">
               <button type="button" className="btn responsive-btn">Learn more</button>
-              <button type="button" className="btn responsive-btn" onClick={() => this.handleModal('block')}>Login</button>
+              <button type="button" className="btn responsive-btn" onClick={this.toggleModal}>Login</button>
             </div>
           </div>
         </section>
@@ -112,74 +124,74 @@ export class LandingPage extends React.Component {
             <h1>My Diary.</h1>
             <h1>Get your thoughts and feelings captured.</h1>
             <p>Getting started is quite simple and easy. Just fill out the info below.</p>
-            <form>
-              <ul id="errors" className="text-red">
-                {errors && typeof errors !== 'string' ? Object.keys(errors).map((error, index) => (
-                  <li key={`error-${String(index)}`}>{errors[error][0]}</li>
-                )) : ''}
-              </ul>
-              <div className="input-container">
-                <i className="fa fa-user icon" />
-                <input className="input-field" type="text" id="fullname" placeholder="Full name" name="fullname" onChange={this.handleChange} />
-              </div>
-              <div className="input-container">
-                <i className="fa fa-envelope icon" />
-                <input className="input-field" type="email" placeholder="Email" id="email" name="email" onChange={this.handleChange} required />
-              </div>
-              <div className="input-container">
-                <i className="fa fa-intersex icon" />
-                <select className="input-field" id="gender" name="gender" onChange={this.handleChange} required>
-                  <option value="">Choose your gender</option>
-                  <option value="Female">Female</option>
-                  <option value="Male">Male</option>
-                </select>
-              </div>
-              <div className="input-container">
-                <i className="fa fa-key icon" />
-                <input className="input-field" type="password" placeholder="Password" id="password" name="password" onChange={this.handleChange} required />
-              </div>
-              <div className="input-container">
-                <i className="fa fa-key icon" />
-                <input className="input-field" type="password" placeholder="Retype Password" id="retypePassword" name="retypePassword" onChange={this.handleChange} required />
-              </div>
-              <button type="submit" id="register" className="btn text-center" onClick={this.handleRegister}>Register</button>
+            <div className="flex-col flex-col-reverse">
+              <form>
+                <ul id="errors" className="text-red">
+                  {errors && typeof errors !== 'string' ? Object.keys(errors).map((error, index) => (
+                    <li key={`error-${String(index)}`}>{errors[error][0]}</li>
+                  )) : ''}
+                </ul>
+                <div className="input-container">
+                  <i className="fa fa-user icon" />
+                  <input className="input-field" type="text" id="fullname" placeholder="Full name" name="fullname" onChange={this.handleChange} />
+                </div>
+                <div className="input-container">
+                  <i className="fa fa-envelope icon" />
+                  <input className="input-field" type="email" placeholder="Email" id="email" name="email" onChange={this.handleChange} required />
+                </div>
+                <div className="input-container">
+                  <i className="fa fa-intersex icon" />
+                  <select className="input-field" id="gender" name="gender" onChange={this.handleChange} required>
+                    <option value="">Choose your gender</option>
+                    <option value="Female">Female</option>
+                    <option value="Male">Male</option>
+                  </select>
+                </div>
+                <div className="input-container">
+                  <i className="fa fa-key icon" />
+                  <input className="input-field" type="password" placeholder="Password" id="password" name="password" onChange={this.handleChange} required />
+                </div>
+                <div className="input-container">
+                  <i className="fa fa-key icon" />
+                  <input className="input-field" type="password" placeholder="Retype Password" id="retypePassword" name="retypePassword" onChange={this.handleChange} required />
+                </div>
+                <button type="submit" id="register" className="btn text-center" onClick={this.handleRegister}>Register</button>
 
-            </form>
-            <p>
-                Already have an account?
-              <a className="#" href="#" onClick={this.toggleModal}>Login</a>
-            </p>
+              </form>
+              <p>
+                Already have an account?&nbsp;
+                <a className="#" href="#" onClick={this.toggleModal}>Login</a>
+              </p>
+            </div>
           </div>
         </section>
-
-        <Modal isOpen={isOpen} closeFn={this.toggleModal} className="modal" headerText="Login">
-          <form>
-            <ul id="errors_login" className="text-red">
-              {
+        <div>
+          <Modal isOpen={isOpen} closeFn={this.toggleModal} className="modal" headerText="Login">
+            <form>
+              <ul id="errors_login" className="text-red">
+                {
                   errors && typeof errors === 'string'
                     ? <li>{errors}</li> : ''
                 }
-            </ul>
+              </ul>
 
-            <div className="input-container">
-              <i className="fa fa-envelope icon" />
-              <input className="input-field" type="email" placeholder="Email" name="email" onChange={this.handleChange} required />
-            </div>
+              <div className="input-container">
+                <i className="fa fa-envelope icon" />
+                <input className="input-field" type="email" placeholder="Email" name="email" onChange={this.handleChange} required />
+              </div>
 
-            <div className="input-container">
-              <i className="fa fa-key icon" />
-              <input className="input-field" type="password" placeholder="Password" name="password" onChange={this.handleChange} required />
-            </div>
+              <div className="input-container">
+                <i className="fa fa-key icon" />
+                <input className="input-field" type="password" placeholder="Password" name="password" onChange={this.handleChange} required />
+              </div>
+              <div className="container-footer flex-footer">
+                <input type="submit" id="login" className="btn" value="Login" onClick={this.handleLogin} />
+                <a href="#">Forgot password?</a>
+              </div>
 
-            <input type="submit" id="login" className="btn" value="Login" onClick={this.handleLogin} />
-            <span className="">
-Forgot
-              <a href="#">password?</a>
-            </span>
-
-          </form>
-        </Modal>
-
+            </form>
+          </Modal>
+        </div>
       </div>
     );
   }
