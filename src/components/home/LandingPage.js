@@ -2,6 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Modal from '../common/Modal';
 import { globalFailure } from '../../actions/globalActions';
 import { register, login } from '../../actions/userActions';
 
@@ -14,16 +15,22 @@ export class LandingPage extends React.Component {
       gender: '',
       password: '',
       retypePassword: '',
+      isOpen: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleRegister = this.handleRegister.bind(this);
     this.handleModal = this.handleModal.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
   }
 
   componentDidMount() {
     const { failure } = this.props;
     failure({});
+  }
+
+  toggleModal() {
+    this.setState(state => ({ isOpen: !state.isOpen }));
   }
 
   /**
@@ -81,6 +88,7 @@ export class LandingPage extends React.Component {
 
   render() {
     const { isLoggedIn, errors } = this.props;
+    const { isOpen } = this.state;
 
     if (isLoggedIn) {
       return <Redirect to="/index" />;
@@ -139,43 +147,38 @@ export class LandingPage extends React.Component {
             </form>
             <p>
                 Already have an account?
-              <a className="#" href="#" onClick={() => this.handleModal('block')}>Login</a>
+              <a className="#" href="#" onClick={this.toggleModal}>Login</a>
             </p>
           </div>
         </section>
-        <div id="modalBox" className="modal">
-          <div className="modal-container">
-            <form>
-              <div className="imgcontainer">
-                <button type="button" className="close" onClick={() => this.handleModal('none')}>&times;</button>
-                <h2>Login</h2>
-              </div>
-              <ul id="errors_login" className="text-red">
-                {
+
+        <Modal isOpen={isOpen} closeFn={this.toggleModal} className="modal" headerText="Login">
+          <form>
+            <ul id="errors_login" className="text-red">
+              {
                   errors && typeof errors === 'string'
                     ? <li>{errors}</li> : ''
                 }
-              </ul>
+            </ul>
 
-              <div className="input-container">
-                <i className="fa fa-envelope icon" />
-                <input className="input-field" type="email" placeholder="Email" name="email" onChange={this.handleChange} required />
-              </div>
+            <div className="input-container">
+              <i className="fa fa-envelope icon" />
+              <input className="input-field" type="email" placeholder="Email" name="email" onChange={this.handleChange} required />
+            </div>
 
-              <div className="input-container">
-                <i className="fa fa-key icon" />
-                <input className="input-field" type="password" placeholder="Password" name="password" onChange={this.handleChange} required />
-              </div>
+            <div className="input-container">
+              <i className="fa fa-key icon" />
+              <input className="input-field" type="password" placeholder="Password" name="password" onChange={this.handleChange} required />
+            </div>
 
-              <input type="submit" id="login" className="btn" value="Login" onClick={this.handleLogin} />
-              <span className="">
+            <input type="submit" id="login" className="btn" value="Login" onClick={this.handleLogin} />
+            <span className="">
 Forgot
-                <a href="#">password?</a>
-              </span>
+              <a href="#">password?</a>
+            </span>
 
-            </form>
-          </div>
-        </div>
+          </form>
+        </Modal>
 
       </div>
     );
