@@ -56,7 +56,6 @@ a{
 
 .text-red{
     color:red;
-    text-transform: capitalize;
 }
 
 img{
@@ -165,6 +164,7 @@ section#right {
     opacity: 0.9;
     margin: 5px 0 5px 0;
     font-size:0.8rem;
+    border-radius: 5px;
 }
 
 .btn:hover {
@@ -234,16 +234,19 @@ section#right {
   text-align: right;
 }
 
+.flex-col-reverse {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
 /**** modal styles **/
 .modal-container {
     width: 100%;
     margin: auto;
     background: #fff;
     padding: 0 20px 20px 20px;
-    border-radius: 20px;
-    padding-top: 20px;
-    margin-left:40px;
-    border: 1px solid;
+    border-radius: 5px;
+    margin: 5px;
 }
  
  
@@ -274,14 +277,17 @@ section#right {
  
  /* The Modal (background) */
  .modal {
-    //  display: none; /* Hidden by default */
-     position: fixed; /* Stay in place */
-     z-index: 1; /* Sit on top */
-     left: 10;
-     top: 0;
-     width: 80%; /* Full width */
-     height: 100%; /* Full height */
-     padding-top: 60px;
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 10;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    padding-top: 60px;
+    background: rgba(0, 0, 9, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
  }
  
  /* Modal Content/Box */
@@ -453,7 +459,6 @@ h2#txt {
     margin-top:40px
 }
 
-
 .entry-img img{
     height: 200px;
     border-radius:0;
@@ -497,6 +502,13 @@ a.right.btn {
 a.logout {
     display: block;
 }
+
+.container-footer{
+    display: flex;
+    &.flex-footer{
+        flex-direction: column;
+    }
+}
 /*-----------------------------------*/
 
 
@@ -525,9 +537,23 @@ a.logout {
         section#right {
             display: block;
         }
+
+        .flex-col {
+            display: flex;
+            flex-direction: column;
+        }
         .left{
             width  :50%;
             padding-left:10px;
+        }
+
+        .container-footer{
+            display: flex;
+            &.flex-footer{
+                 flex-direction: row;
+                justify-content: space-between;
+                align-items: center
+            }
         }
 
         .modal-container {

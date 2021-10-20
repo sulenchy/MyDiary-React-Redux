@@ -7,7 +7,7 @@ export default function Modal({
 }) {
   if (!isOpen) return null;
   return ReactDOM.createPortal(
-    <div id="modalBox" className={className}>
+    <div id="modalBox" className={className} role="dialog">
       <div className="modal-container">
         <header className="imgcontainer">
           <button type="button" className="close" onClick={closeFn}>&times;</button>
