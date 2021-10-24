@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { globalFailure } from '../../actions/globalActions';
 import { addNewEntry } from '../../actions/entryActions';
 import StartTime from '../../services/time';
+import Modal from '../common/Modal';
 
 class DashBoard extends Component {
   constructor(props) {
@@ -12,16 +13,33 @@ class DashBoard extends Component {
     this.state = {
       value: 0,
       title: '',
-      content: ''
+      content: '',
+      isOpen: false
     };
     this.handleModal = this.handleModal.bind(this);
     this.handleCreateEntry = this.handleCreateEntry.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleCreateEntry = this.handleCreateEntry.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
     this._changeTime();
   }
 
   componentDidMount() {
+    const { failure } = this.props;
+    failure({});
+    window.addEventListener('click', (event) => {
+      if (event.target.id === 'modalBox') {
+        this.toggleModal();
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('click', this.toggleModal);
+  }
+
+  toggleModal() {
+    this.setState(state => ({ isOpen: !state.isOpen }));
     const { failure } = this.props;
     failure({});
   }
@@ -36,12 +54,7 @@ class DashBoard extends Component {
   }
 
   handleModal() {
-    const modal = document.getElementById('modalBox');
-    if (modal.style.display !== 'block') {
-      modal.style.display = 'block';
-    } else {
-      modal.style.display = 'none';
-    }
+    this.toggleModal();
   }
 
   _changeTime() {
@@ -69,6 +82,7 @@ class DashBoard extends Component {
 
   render() {
     const { entryPayload, errors } = this.props;
+    const { isOpen } = this.state;
     return (
       <div id="dashboard" className="container">
         <div className="card-dash col-1-3">
@@ -84,30 +98,24 @@ class DashBoard extends Component {
         <div className="card-dash col-1-3">
           <h2 id="txt">{StartTime()}</h2>
         </div>
-        <div id="modalBox" className="modal">
-          <div className="modal-container">
-            <div id="modal-app">
-              <form>
-                <div className="imgcontainer">
-                  <button type="button" onClick={this.handleModal} className="close" title="Close Modal">&times;</button>
-                  <h2>Add Entry</h2>
-                </div>
-                <ul id="errors_login" className="text-red">
-                  {
+        <div>
+          <Modal isOpen={isOpen} closeFn={this.toggleModal} className="modal" headerText="Add New Entry">
+            <form>
+              <ul id="errors_dashboard" className="text-red">
+                {
                   errors && typeof errors === 'string'
                     ? <li>{errors}</li> : ''
                 }
-                </ul>
-                <div className="input-container">
-                  <input className="input-field" id="title" name="title" type="text" placeholder="Entry Title" onChange={this.handleChange} required />
-                </div>
-                <div className="input-container">
-                  <textarea rows="4" className="input-field" name="content" id="content" onChange={this.handleChange} placeholder="Entry content" />
-                </div>
-                <button type="submit" className="btn" id="file-submit1" onClick={this.handleCreateEntry}>Save</button>
-              </form>
-            </div>
-          </div>
+              </ul>
+              <div className="input-container">
+                <input className="input-field" id="title" name="title" type="text" placeholder="Entry Title" onChange={this.handleChange} required />
+              </div>
+              <div className="input-container">
+                <textarea rows="4" className="input-field" name="content" id="content" onChange={this.handleChange} placeholder="Entry content" />
+              </div>
+              <button type="submit" className="btn" id="file-submit1" onClick={this.handleCreateEntry}>Save</button>
+            </form>
+          </Modal>
         </div>
       </div>
     );

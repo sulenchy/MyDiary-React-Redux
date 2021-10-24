@@ -35,7 +35,7 @@ export class LandingPage extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('click');
+    window.removeEventListener('click', this.toggleModal);
   }
 
   toggleModal() {
