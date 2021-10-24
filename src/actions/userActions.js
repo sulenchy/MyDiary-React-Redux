@@ -21,7 +21,7 @@ export const register = (user, history) => (dispatch) => {
         dispatch(globalLoading(false));
         return dispatch(globalLoggedIn(true));
       }
-    });
+    }).catch(err => err.message);
 };
 
 
@@ -44,7 +44,7 @@ export const getUserInfo = token => (dispatch) => {
         dispatch(userInfoSuccess(body));
         dispatch(globalLoading(false));
       }
-    });
+    }).catch(err => err.message);
 };
 
 export const login = (user, history) => (dispatch) => {
@@ -62,5 +62,5 @@ export const login = (user, history) => (dispatch) => {
         dispatch(globalLoggedIn(true));
         return history.push('/index');
       }
-    });
+    }).catch(err => err.message);
 };

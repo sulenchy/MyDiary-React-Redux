@@ -6,6 +6,7 @@ import DashBoard from './dashBoard';
 import { getUserInfo, logout } from '../../actions/userActions';
 import getUserEntries from '../../actions/entryActions';
 import groupBy from '../../services/groupEntries';
+import Sidebar from '../common/Sidebar';
 
 const EntryCard = (props) => {
   const { data } = props;
@@ -34,8 +35,11 @@ EntryCard.propTypes = {
 class Index extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      isSidebarShown: false,
+    };
     this.handleLogout = this.handleLogout.bind(this);
+    this.toggleSidebar = this.toggleSidebar.bind(this);
   }
 
   componentDidMount() {
@@ -43,6 +47,15 @@ class Index extends Component {
     const { token } = JSON.parse(localStorage.getItem('user'));
     retrieveUserInfo(token);
     retrieveUserEntries(token);
+    window.addEventListener('click', (event) => {
+      if (event.target.id === 'app') {
+        this.toggleSidebar();
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('click', this.toggleSidebar);
   }
 
   handleLogout() {
@@ -50,9 +63,17 @@ class Index extends Component {
     logoutUser();
   }
 
+  toggleSidebar() {
+    this.setState(state => ({
+      isSidebarShown: !state.isSidebarShown
+    }));
+  }
+
 
   render() {
     const { isLoggedIn, payload, entryPayload } = this.props;
+    const { isSidebarShown } = this.state;
+
     let entries = {};
     if (entryPayload.payload.entries) {
       entries = groupBy(entryPayload.payload.entries, 'date');
@@ -62,27 +83,25 @@ class Index extends Component {
     }
     return (
       <div className="row">
-        <div id="mySidenav" className="sidenav">
-          {/* <a href="javascript:void(0)" className="closebtn" onClick="closeNav()">&times;</a> */}
-
-          <a href="#" id="profile-pic"><img className="img-center" id="img-element" alt="Avatar" src={payload.user ? payload.user[0].passporturl : '#'} /></a>
-          <a id="username" href="#">{payload.user ? payload.user[0].fullname : ''}</a>
-          <hr />
-          <a id="entries" href="#">Entries</a>
-          <a id="profile" href="#" onClick="userProfile();">User Profile</a>
-          <a id="logout-small" href="#" className="logout" onClick={this.handleLogout}>Logout</a>
-        </div>
+        <Sidebar
+          payload={payload}
+          isSidebarShown={isSidebarShown}
+          handleLogout={this.handleLogout}
+        />
         <div className="main-form">
           <div className="row bottom-border">
             <div className="left">
               <h2>
-                <span className="hamburgerIcon">&#9776;</span>
+                <button
+                    className="hamburgerIcon" onClick={this.toggleSidebar} type="button">
+                    &#9776;
+                </button>
                 {' '}
 &nbsp;&nbsp; &nbsp;&nbsp; My Diary... Your Thoughts & Feelings
 
               </h2>
             </div>
-            <div className="full-width">
+            <div className="full-width" style={{ padding: '5px' }}>
               <a id="logout-big" href="#" className="right btn" onClick={this.handleLogout}>Logout</a>
             </div>
           </div>
@@ -95,7 +114,7 @@ class Index extends Component {
               {Object.keys(entries).map((entry) => {
                 const { length } = entries[entry];
                 const entryDetail = { length, entry };
-                return <EntryCard data={entryDetail} />;
+                return <EntryCard key={entry.id} data={entryDetail} />;
               })}
 
             </div>

@@ -21,7 +21,7 @@ const getUserEntries = token => (dispatch) => {
         dispatch(entrySuccess(body));
         dispatch(globalLoading(false));
       }
-    });
+    }).catch(err => err.message);
 };
 
 export const addNewEntry = (entry, token) => (dispatch) => {
@@ -36,7 +36,7 @@ export const addNewEntry = (entry, token) => (dispatch) => {
         toastr.success(entryData.status, entryData.message);
         dispatch(globalLoading(false));
       }
-    });
+    }).catch(err => err.message);
 };
 
 export default getUserEntries;
