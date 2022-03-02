@@ -4,6 +4,7 @@ const path = require('path');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
 const common = require('./webpack.common.js');
+require('dotenv').config();
 
 module.exports = merge(common, {
   devtool: 'source-map',
@@ -41,8 +42,8 @@ module.exports = merge(common, {
     new webpack.HotModuleReplacementPlugin()
   ],
   devServer: {
-    contentBase: path.join(__dirname, 'src', 'index.html'),
-    port: 8080,
+    contentBase: path.join(__dirname, 'public', 'index.html'),
+    port: process.env.port || 8085,
     historyApiFallback: true,
     hot: true
   },

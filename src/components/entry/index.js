@@ -29,7 +29,7 @@ const EntryCard = (props) => {
 
 EntryCard.propTypes = {
   data: PropTypes.object.isRequired
-}
+};
 
 class Index extends Component {
   constructor(props) {
@@ -40,7 +40,7 @@ class Index extends Component {
 
   componentDidMount() {
     const { retrieveUserInfo, retrieveUserEntries } = this.props;
-    const { token } = JSON.parse(localStorage.getItem('user')).data;
+    const { token } = JSON.parse(localStorage.getItem('user'));
     retrieveUserInfo(token);
     retrieveUserEntries(token);
   }

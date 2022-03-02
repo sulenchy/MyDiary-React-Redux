@@ -84,7 +84,7 @@ module.exports = {
       'process.env.JWT_SECRET': JSON.stringify(process.env.JWT_SECRET),
     }),
     new HtmlWebpackPlugin({
-      template: './src/index.html',
+      template: './public/index.html',
       filename: 'index.html',
       inject: 'body'
     }),
