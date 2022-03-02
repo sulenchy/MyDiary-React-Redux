@@ -3,11 +3,11 @@ import ReduxToastr from 'react-redux-toastr';
 import React, { Fragment, Component } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import NotFound from './components/NotFound';
-import Spinner from './components/common/spinner';
-import { persistor, store } from './store/store';
-import routes from './routes';
-import '../public/styles/main.scss';
+import NotFound from './NotFound';
+import Spinner from './common/spinner';
+import { persistor, store } from '../store/store';
+import routes from '../routes';
+import '../styles/main.scss';
 
 class App extends Component {
   constructor(props) {
@@ -26,15 +26,15 @@ class App extends Component {
               <Spinner />
               <Switch>
                 {
-                routes.map(route => (
-                  <Route
-                    exact={route.exact}
-                    path={route.path}
-                    key={route.path}
-                    component={route.component}
-                  />
-                ))
-            }
+                  routes.map(route => (
+                    <Route
+                      exact={route.exact}
+                      path={route.path}
+                      key={route.path}
+                      component={route.component}
+                    />
+                  ))
+                }
                 <Route component={NotFound} />
               </Switch>
               <ReduxToastr
