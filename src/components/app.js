@@ -38,7 +38,7 @@ class App extends Component {
                 <Route component={NotFound} />
               </Switch>
               <ReduxToastr
-                timeOut={null}
+                timeOut={2000}
                 newestOnTop
                 preventDuplicates
                 position="top-right"
