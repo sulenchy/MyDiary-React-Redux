@@ -43,7 +43,7 @@ module.exports = merge(common, {
   ],
   devServer: {
     contentBase: path.join(__dirname, 'public', 'index.html'),
-    port: process.env.port || 8085,
+    port: process.env.PORT || 8085,
     historyApiFallback: true,
     hot: true
   },

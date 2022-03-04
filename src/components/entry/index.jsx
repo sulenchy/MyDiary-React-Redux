@@ -37,6 +37,7 @@ class Index extends Component {
     super(props);
     this.state = {
       isSidebarShown: false,
+      token: ''
     };
     this.handleLogout = this.handleLogout.bind(this);
     this.toggleSidebar = this.toggleSidebar.bind(this);
@@ -44,7 +45,11 @@ class Index extends Component {
 
   componentDidMount() {
     const { retrieveUserInfo, retrieveUserEntries } = this.props;
-    const { token } = JSON.parse(localStorage.getItem('user'));
+    const { token = '' } = JSON.parse(localStorage.getItem('MY_DIARY_USER')) ? JSON.parse(localStorage.getItem('MY_DIARY_USER')).data : {};
+    if (!token) {
+      this.handleLogout();
+    }
+    this.setState({ token });
     retrieveUserInfo(token);
     retrieveUserEntries(token);
     window.addEventListener('click', (event) => {
@@ -72,7 +77,7 @@ class Index extends Component {
 
   render() {
     const { isLoggedIn, payload, entryPayload } = this.props;
-    const { isSidebarShown } = this.state;
+    const { isSidebarShown, token } = this.state;
 
     let entries = {};
     if (entryPayload.payload.entries) {
@@ -107,14 +112,14 @@ class Index extends Component {
           </div>
 
           <div id="app">
-            <DashBoard />
+            <DashBoard token={token} />
             <div className="container">
               <h2>Entries in Days</h2>
               <input type="text" className="input-field" id="search" placeholder="Search" name="search" />
               {Object.keys(entries).map((entry) => {
                 const { length } = entries[entry];
                 const entryDetail = { length, entry };
-                return <EntryCard key={entry.id} data={entryDetail} />;
+                return <EntryCard key={entry} data={entryDetail} />;
               })}
 
             </div>

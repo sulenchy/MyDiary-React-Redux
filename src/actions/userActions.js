@@ -16,7 +16,7 @@ export const register = (user, history) => (dispatch) => {
       } else {
         const { userData } = dispatch(success(body));
         toastr.success(userData.status, userData.message);
-        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('MY_DIARY_USER', JSON.stringify(userData));
         history.push('/index');
         dispatch(globalLoading(false));
         return dispatch(globalLoggedIn(true));
@@ -29,6 +29,7 @@ export const logout = () => (dispatch) => {
   dispatch(globalLoading(true));
   dispatch(globalLoggedIn(false));
   dispatch(globalLoading(false));
+  localStorage.removeItem('MY_DIARY_USER');
 };
 
 export const getUserInfo = token => (dispatch) => {
@@ -56,7 +57,7 @@ export const login = (user, history) => (dispatch) => {
         dispatch(globalFailure(body.message));
       } else {
         const { userData } = dispatch(success(body));
-        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('MY_DIARY_USER', JSON.stringify(userData));
         toastr.success(userData.status, userData.message);
         dispatch(globalLoading(false));
         dispatch(globalLoggedIn(true));

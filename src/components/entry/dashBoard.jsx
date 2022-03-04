@@ -21,12 +21,12 @@ class DashBoard extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleCreateEntry = this.handleCreateEntry.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
-    this._changeTime();
   }
 
   componentDidMount() {
     const { failure } = this.props;
     failure({});
+    this._changeTime();
     window.addEventListener('click', (event) => {
       if (event.target.id === 'modalBox') {
         this.toggleModal();
@@ -65,11 +65,10 @@ class DashBoard extends Component {
 
   handleCreateEntry(event) {
     event.preventDefault();
-    const { token } = JSON.parse(localStorage.getItem('user')).data;
     const {
       title, content
     } = this.state;
-    const { failure } = this.props;
+    const { failure, token } = this.props;
     if (title.trim() === '' || content.trim() === '') {
       return failure('Please enter the title and the content of the entry');
     }
@@ -130,6 +129,7 @@ DashBoard.propTypes = {
   ]).isRequired,
   failure: PropTypes.func.isRequired,
   createEntry: PropTypes.func.isRequired,
+  token: PropTypes.string.isRequired
 };
 
 export const mapStateToProps = state => ({
