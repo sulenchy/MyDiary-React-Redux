@@ -8,7 +8,7 @@ export default function Sidebar({
   return ReactDOM.createPortal(
     <div id="mySidenav" className="sidenav" style={{ display: isSidebarShown ? 'block' : '' }}>
       {
-        payload.user && payload.user[0].passporturl
+        payload.user && payload.user[0].passporturl !== 'https://goo.gl/eUu3Qw'
           ? <a href="#" id="profile-pic"><img className="img-center" id="img-element" alt="Avatar" src={payload.user[0].passporturl} /></a>
           : <Icon.Avatar className="img-center" style={{ fill: '#fff' }} />
       }
