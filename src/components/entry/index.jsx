@@ -53,7 +53,7 @@ class Index extends Component {
     retrieveUserInfo(token);
     retrieveUserEntries(token);
     window.addEventListener('click', (event) => {
-      if (event.target.id === 'app') {
+      if (event.target.id === 'app' && this.state.isSidebarShown) {
         this.toggleSidebar();
       }
     });
