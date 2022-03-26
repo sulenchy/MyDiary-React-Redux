@@ -94,7 +94,7 @@ class Index extends Component {
           handleLogout={this.handleLogout}
         />
         <div className="main-form">
-          <div className="row bottom-border">
+          <div className="row bottom-border" style={{ position: 'fixed', width: '100%', background: '#fff' }}>
             <div className="left">
               <h2>
                 <button
@@ -111,7 +111,7 @@ class Index extends Component {
             </div>
           </div>
 
-          <div id="app">
+          <div id="app" style={{ paddingTop: '70px' }}>
             <DashBoard token={token} />
             <div className="container">
               <h2>Entries in Days</h2>

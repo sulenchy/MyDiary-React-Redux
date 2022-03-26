@@ -4,7 +4,6 @@ const path = require('path');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
 const common = require('./webpack.common.js');
-require('dotenv').config();
 
 module.exports = merge(common, {
   devtool: 'source-map',

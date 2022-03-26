@@ -21,7 +21,10 @@ export const register = (user, history) => (dispatch) => {
         dispatch(globalLoading(false));
         return dispatch(globalLoggedIn(true));
       }
-    }).catch(err => err.message);
+    }).catch((err) => {
+      dispatch(globalLoading(false));
+      return err.message;
+    });
 };
 
 
@@ -45,11 +48,15 @@ export const getUserInfo = token => (dispatch) => {
         dispatch(userInfoSuccess(body));
         dispatch(globalLoading(false));
       }
-    }).catch(err => err.message);
+    }).catch((err) => {
+      dispatch(globalLoading(false));
+      return err.message;
+    });
 };
 
 export const login = (user, history) => (dispatch) => {
   dispatch(globalLoading(true));
+  console.log(process.env.API_BASE_URL, ' ====>')
   return fetch(`${process.env.API_BASE_URL}/auth/login`, requestOptions(user, 'POST', null))
     .then(res => res.json())
     .then((body) => {
@@ -63,5 +70,8 @@ export const login = (user, history) => (dispatch) => {
         dispatch(globalLoggedIn(true));
         return history.push('/index');
       }
-    }).catch(err => err.message);
+    }).catch((err) => {
+      dispatch(globalLoading(false));
+      return err.message;
+    });
 };

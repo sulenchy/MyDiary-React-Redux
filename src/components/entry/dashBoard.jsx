@@ -21,6 +21,7 @@ class DashBoard extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleCreateEntry = this.handleCreateEntry.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
+    this.handleClearInputs = this.handleClearInputs.bind(this);
   }
 
   componentDidMount() {
@@ -38,10 +39,15 @@ class DashBoard extends Component {
     window.removeEventListener('click', this.toggleModal);
   }
 
+  handleClearInputs() {
+    this.setState({ title: '', content: '' });
+  }
+
   toggleModal() {
     this.setState(state => ({ isOpen: !state.isOpen }));
     const { failure } = this.props;
     failure({});
+    this.handleClearInputs();
   }
 
   /**
@@ -68,7 +74,7 @@ class DashBoard extends Component {
     const {
       title, content
     } = this.state;
-    const { failure, token } = this.props;
+    const { failure, token, errors } = this.props;
     if (title.trim() === '' || content.trim() === '') {
       return failure('Please enter the title and the content of the entry');
     }
@@ -76,12 +82,15 @@ class DashBoard extends Component {
     createEntry({
       title, content
     }, token);
+    if (errors && Object.keys(errors).length) {
+      this.handleClearInputs();
+    }
   }
 
 
   render() {
     const { entryPayload, errors } = this.props;
-    const { isOpen } = this.state;
+    const { isOpen, title, content } = this.state;
     return (
       <div id="dashboard" className="container">
         <div className="card-dash col-1-3">
@@ -103,14 +112,15 @@ class DashBoard extends Component {
               <ul id="errors_dashboard" className="text-red">
                 {
                   errors && typeof errors === 'string'
-                    ? <li>{errors}</li> : ''
+                    ? <li className="error-list">{errors}</li>
+                    : Object.values(errors).map((error, index) => <li className="error-list" key={index}>{error}</li>)
                 }
               </ul>
               <div className="input-container">
-                <input className="input-field" id="title" name="title" type="text" placeholder="Entry Title" onChange={this.handleChange} required />
+                <input className="input-field" id="title" value={title} name="title" type="text" placeholder="Entry Title" onChange={this.handleChange} required />
               </div>
               <div className="input-container">
-                <textarea rows="4" className="input-field" name="content" id="content" onChange={this.handleChange} placeholder="Entry content" />
+                <textarea rows="4" className="input-field" value={content} name="content" id="content" onChange={this.handleChange} placeholder="Entry content" required />
               </div>
               <button type="submit" className="btn" id="file-submit1" onClick={this.handleCreateEntry}>Save</button>
             </form>

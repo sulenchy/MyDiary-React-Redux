@@ -20,6 +20,10 @@ li{
     list-style: none;
 }
 
+.error-list {
+    list-style: disc;
+}
+
 a{
     text-decoration: none;
 }
@@ -91,9 +95,10 @@ nav a, button{
 }
 
 .input-field {
-    width: 100%;
-    padding: 10px;
+    font-family: "Lato", sans-serif;
     outline: none;
+    padding: 10px;
+    width: 100%;
 }
 
 .input-field:focus {

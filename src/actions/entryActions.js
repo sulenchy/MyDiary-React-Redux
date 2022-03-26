@@ -3,10 +3,8 @@ import { GET_USER_ENTRIES, ADD_NEW_ENTRY_SUCCESS } from './actionTypes';
 import requestOptions from '../utils/requestOptions';
 import { globalLoading, globalFailure } from './globalActions';
 
-
 const entrySuccess = entryData => ({ type: GET_USER_ENTRIES, entryData });
 const addEntrySuccess = entryData => ({ type: ADD_NEW_ENTRY_SUCCESS, entryData });
-
 
 const getUserEntries = token => (dispatch) => {
   dispatch(globalLoading(true));
@@ -21,7 +19,10 @@ const getUserEntries = token => (dispatch) => {
         dispatch(entrySuccess(body));
         dispatch(globalLoading(false));
       }
-    }).catch(err => err.message);
+    }).catch((err) => {
+      dispatch(globalLoading(false));
+      return err.message;
+    });
 };
 
 export const addNewEntry = (entry, token) => (dispatch) => {
@@ -29,14 +30,18 @@ export const addNewEntry = (entry, token) => (dispatch) => {
   return fetch(`${process.env.API_BASE_URL}/entries`, requestOptions(entry, 'POST', token))
     .then(res => res.json())
     .then((body) => {
-      if (body.errors) {
-        dispatch(globalFailure(body.errors));
-      } else {
-        const { entryData } = dispatch(addEntrySuccess(body));
-        toastr.success(entryData.status, entryData.message);
-        dispatch(globalLoading(false));
+      if (body.data.errors) {
+        dispatch(globalFailure(body.data.errors));
+        toastr.error(body.status);
+        return;
       }
-    }).catch(err => err.message);
+      const { entryData } = dispatch(addEntrySuccess(body));
+      toastr.success(entryData.status, entryData.message);
+      dispatch(globalLoading(false));
+    }).catch((err) => {
+      dispatch(globalLoading(false));
+      return err.message;
+    });
 };
 
 export default getUserEntries;
