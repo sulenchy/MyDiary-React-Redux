@@ -97,10 +97,14 @@ class DashBoard extends Component {
           <h2>Total entry</h2>
           <h2>{entryPayload.payload.length}</h2>
         </div>
-        <div className="card-dash col-1-3">
+        <div
+          className="card-dash col-1-3"
+          style={{ cursor: 'pointer' }}
+          onClick={this.handleModal}
+          aria-hidden="true">
           <h2>Add New</h2>
           <h2>
-            <Link to="#" onClick={this.handleModal}><i className="fas fa-plus-circle" id="add-new" /></Link>
+            <Link to="#"><i className="fas fa-plus-circle" id="add-new" /></Link>
           </h2>
         </div>
         <div className="card-dash col-1-3">

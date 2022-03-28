@@ -44,16 +44,17 @@ class Index extends Component {
   }
 
   componentDidMount() {
-    const { retrieveUserInfo, retrieveUserEntries } = this.props;
+    const { retrieveUserInfo, retrieveUserEntries, isLoggedIn } = this.props;
     const { token = '' } = JSON.parse(localStorage.getItem('MY_DIARY_USER')) ? JSON.parse(localStorage.getItem('MY_DIARY_USER')).data : {};
-    if (!token) {
+    if (!token || !isLoggedIn) {
       this.handleLogout();
     }
     this.setState({ token });
     retrieveUserInfo(token);
     retrieveUserEntries(token);
     window.addEventListener('click', (event) => {
-      if (event.target.id === 'app' && this.state.isSidebarShown) {
+      const { isSidebarShown } = this.state;
+      if (event.target.id === 'app' && isSidebarShown) {
         this.toggleSidebar();
       }
     });
@@ -115,7 +116,7 @@ class Index extends Component {
             <DashBoard token={token} />
             <div className="container">
               <h2>Entries in Days</h2>
-              <input type="text" className="input-field" id="search" placeholder="Search" name="search" />
+              <input type="text" className="input-field" id="search" placeholder="Search by date" name="search" />
               {Object.keys(entries).map((entry) => {
                 const { length } = entries[entry];
                 const entryDetail = { length, entry };
