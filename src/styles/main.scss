@@ -50,6 +50,16 @@ a{
     height: 100%;
 }
 
+.fixed-header {
+    width: 100%;
+    position: fixed;
+    background-color: #fff;
+}
+
+.show-big-screen {
+    display: none;
+}
+
 .register{
   width:100%;
 }
@@ -113,6 +123,9 @@ nav a, button{
     height: 150px;
 }
 
+.rounded {
+    border-radius: 10px;
+}
 /* Set a style for the submit button */
 .btn-rounded {
     background-color: #0a0072;
@@ -125,6 +138,11 @@ nav a, button{
     opacity: 0.9;
     margin: 5px 0 5px 0;
     font-size:1rem;
+}
+
+.active {
+    background-color: #0a0072;
+    color: #fff;
 }
 
 .pagination{
@@ -541,6 +559,15 @@ a.logout {
     .left{
         width  :50%;
         padding-left:10px;
+    }
+
+    .show-big-screen {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .fixed-header {
+        width: 80%;
     }
 
     .container-footer{

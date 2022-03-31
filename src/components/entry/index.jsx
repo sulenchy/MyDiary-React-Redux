@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DashBoard from './dashBoard';
@@ -7,30 +7,9 @@ import { getUserInfo, logout } from '../../actions/userActions';
 import getUserEntries from '../../actions/entryActions';
 import groupBy from '../../services/groupEntries';
 import Sidebar from '../common/Sidebar';
+import Entries from './Entries';
+import Paginate from './Paginate';
 
-const EntryCard = (props) => {
-  const { data } = props;
-  return (
-    <Link to="#" className="entrygroup">
-      <div className="card row-entry">
-        <div className="day">
-          <h2>{data.entry}</h2>
-        </div>
-        <div className="entry">
-          <h2>
-            {data.length}
-            {' '}
-            entry
-          </h2>
-        </div>
-      </div>
-    </Link>
-  );
-};
-
-EntryCard.propTypes = {
-  data: PropTypes.object.isRequired
-};
 
 class Index extends Component {
   constructor(props) {
@@ -44,9 +23,14 @@ class Index extends Component {
   }
 
   componentDidMount() {
-    const { retrieveUserInfo, retrieveUserEntries, isLoggedIn } = this.props;
+    const {
+      retrieveUserInfo,
+      retrieveUserEntries,
+      isLoggedIn,
+      payload
+    } = this.props;
     const { token = '' } = JSON.parse(localStorage.getItem('MY_DIARY_USER')) ? JSON.parse(localStorage.getItem('MY_DIARY_USER')).data : {};
-    if (!token || !isLoggedIn) {
+    if (payload.message === 'User is unauthorized' || !token) {
       this.handleLogout();
     }
     this.setState({ token });
@@ -58,6 +42,14 @@ class Index extends Component {
         this.toggleSidebar();
       }
     });
+  }
+
+  componentDidUpdate() {
+    const { payload } = this.props;
+    const { token = '' } = JSON.parse(localStorage.getItem('MY_DIARY_USER')) ? JSON.parse(localStorage.getItem('MY_DIARY_USER')).data : {};
+    if (payload.message === 'User is unauthorized' || !token) {
+      this.handleLogout();
+    }
   }
 
   componentWillUnmount() {
@@ -75,10 +67,10 @@ class Index extends Component {
     }));
   }
 
-
   render() {
     const { isLoggedIn, payload, entryPayload } = this.props;
     const { isSidebarShown, token } = this.state;
+
 
     let entries = {};
     if (entryPayload.payload.entries) {
@@ -87,6 +79,12 @@ class Index extends Component {
     if (!isLoggedIn) {
       return <Redirect to="/" />;
     }
+    const PaginatedComponent = Paginate({
+      WrappedComponent: Entries,
+      itemsPerPage: 4,
+      entries: Object.entries(entries)
+    });
+
     return (
       <div className="row">
         <Sidebar
@@ -95,7 +93,7 @@ class Index extends Component {
           handleLogout={this.handleLogout}
         />
         <div className="main-form">
-          <div className="row bottom-border" style={{ position: 'fixed', width: '100%', background: '#fff' }}>
+          <div className="row bottom-border fixed-header">
             <div className="left">
               <h2>
                 <button
@@ -107,24 +105,19 @@ class Index extends Component {
 
               </h2>
             </div>
-            <div className="full-width" style={{ padding: '5px' }}>
-              <a id="logout-big" href="#" className="right btn" onClick={this.handleLogout}>Logout</a>
+            <div className="full-width show-big-screen" style={{ padding: '5px' }}>
+              <a id="logout-big" href="#" className="btn" onClick={this.handleLogout}>Logout</a>
             </div>
           </div>
 
-          <div id="app" style={{ paddingTop: '70px' }}>
+          <div id="app" style={{ paddingTop: '70px', display: 'flex', flexDirection: 'column'}}>
             <DashBoard token={token} />
-            <div className="container">
-              <h2>Entries in Days</h2>
-              <input type="text" className="input-field" id="search" placeholder="Search by date" name="search" />
-              {Object.keys(entries).map((entry) => {
-                const { length } = entries[entry];
-                const entryDetail = { length, entry };
-                return <EntryCard key={entry} data={entryDetail} />;
-              })}
-
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              { Object.entries(entries).length
+                ? <PaginatedComponent />
+                : <p>You do not have an entry. You can add one now</p>
+              }
             </div>
-
           </div>
 
         </div>

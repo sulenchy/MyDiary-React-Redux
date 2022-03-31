@@ -56,7 +56,6 @@ export const getUserInfo = token => (dispatch) => {
 
 export const login = (user, history) => (dispatch) => {
   dispatch(globalLoading(true));
-  console.log(process.env.API_BASE_URL, ' ====>')
   return fetch(`${process.env.API_BASE_URL}/auth/login`, requestOptions(user, 'POST', null))
     .then(res => res.json())
     .then((body) => {
