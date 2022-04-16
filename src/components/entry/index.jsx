@@ -1,157 +1,68 @@
-import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import DashBoard from './dashBoard';
-import { getUserInfo, logout } from '../../actions/userActions';
-import getUserEntries from '../../actions/entryActions';
-import groupBy from '../../services/groupEntries';
-import Sidebar from '../common/Sidebar';
-import Entries from './Entries';
-import Paginate from './Paginate';
+import { useParams, useLocation, useHistory } from 'react-router-dom';
 
+function index({ entries = [] }) {
+  const [showAll, setShowAll] = useState(false);
+  const [entryArr, setEntryArr] = useState([]);
 
-class Index extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isSidebarShown: false,
-      token: ''
-    };
-    this.handleLogout = this.handleLogout.bind(this);
-    this.toggleSidebar = this.toggleSidebar.bind(this);
-  }
-
-  componentDidMount() {
-    const {
-      retrieveUserInfo,
-      retrieveUserEntries,
-      isLoggedIn,
-      payload
-    } = this.props;
-    const { token = '' } = JSON.parse(localStorage.getItem('MY_DIARY_USER')) ? JSON.parse(localStorage.getItem('MY_DIARY_USER')).data : {};
-    if (payload.message === 'User is unauthorized' || !token) {
-      this.handleLogout();
+  useEffect(() => {
+    const history = useHistory();
+    console.log('group ===> ', history);
+    if (showAll) {
+      // get all entries headerText
+      const allEntries = [];
+      setEntryArr(allEntries);
+      return;
     }
-    this.setState({ token });
-    retrieveUserInfo(token);
-    retrieveUserEntries(token);
-    window.addEventListener('click', (event) => {
-      const { isSidebarShown } = this.state;
-      if (event.target.id === 'app' && isSidebarShown) {
-        this.toggleSidebar();
-      }
-    });
-  }
+    setEntryArr(entries);
+  }, []);
 
-  componentDidUpdate() {
-    const { payload } = this.props;
-    const { token = '' } = JSON.parse(localStorage.getItem('MY_DIARY_USER')) ? JSON.parse(localStorage.getItem('MY_DIARY_USER')).data : {};
-    if (payload.message === 'User is unauthorized' || !token) {
-      this.handleLogout();
-    }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('click', this.toggleSidebar);
-  }
-
-  handleLogout() {
-    const { logoutUser } = this.props;
-    logoutUser();
-  }
-
-  toggleSidebar() {
-    this.setState(state => ({
-      isSidebarShown: !state.isSidebarShown
-    }));
-  }
-
-  render() {
-    const { isLoggedIn, payload, entryPayload } = this.props;
-    const { isSidebarShown, token } = this.state;
-
-
-    let entries = {};
-    if (entryPayload.payload.entries) {
-      entries = groupBy(entryPayload.payload.entries, 'date');
-    }
-    if (!isLoggedIn) {
-      return <Redirect to="/" />;
-    }
-    const PaginatedComponent = Paginate({
-      WrappedComponent: Entries,
-      itemsPerPage: 4,
-      entries: Object.entries(entries)
-    });
-
-    return (
-      <div className="row">
-        <Sidebar
-          payload={payload}
-          isSidebarShown={isSidebarShown}
-          handleLogout={this.handleLogout}
-        />
-        <div className="main-form">
-          <div className="row bottom-border fixed-header">
-            <div className="left">
-              <h2>
-                <button
-                    className="hamburgerIcon" onClick={this.toggleSidebar} type="button">
-                    &#9776;
-                </button>
-                {' '}
-&nbsp;&nbsp; &nbsp;&nbsp; My Diary... Your Thoughts & Feelings
-
-              </h2>
-            </div>
-            <div className="full-width show-big-screen" style={{ padding: '5px' }}>
-              <a id="logout-big" href="#" className="btn" onClick={this.handleLogout}>Logout</a>
-            </div>
-          </div>
-
-          <div id="app" style={{ paddingTop: '70px', display: 'flex', flexDirection: 'column'}}>
-            <DashBoard token={token} />
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              { Object.entries(entries).length
-                ? <PaginatedComponent />
-                : <p>You do not have an entry. You can add one now</p>
-              }
-            </div>
-          </div>
-
-        </div>
+  return (
+    <>
+      <div className="container" style={{ marginTop: '70px' }}>
+        <h2>{ showAll ? 'All Entries' : 'Month | Day Year' }</h2>
+        <input type="search" className="input-field" id="search" placeholder="Search by title" name="search" />
+        <>
+          {
+           entryArr.length && entryArr.map((element, i) => (
+             <div className="card row" key={i}>
+               <div className="day">
+                 <a href="./entry-content.html">
+                   <h2>hr:min:sec</h2>
+                 </a>
+               </div>
+               <div className="entry">
+                 <a href="./entry-content.html">
+                   <h2>Title of the entry</h2>
+                 </a>
+               </div>
+               <div className="row">
+                 <div className="buttons">
+                   <div className="container">
+                     <a href="#">
+                       <i className="fa fa-trash" />
+                     </a>
+                   </div>
+                   <div className="container">
+                     <a href="#">
+                       <i className="fa fa-edit" />
+                     </a>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           ))
+          }
+        </>
       </div>
-    );
-  }
+    </>
+  );
 }
 
-
-Index.propTypes = {
-  isLoggedIn: PropTypes.bool.isRequired,
-  retrieveUserInfo: PropTypes.func.isRequired,
-  retrieveUserEntries: PropTypes.func.isRequired,
-  logoutUser: PropTypes.func.isRequired,
-  payload: PropTypes.object.isRequired,
-  entryPayload: PropTypes.object.isRequired
-};
-
 const mapStateToProps = state => ({
-  isLoggedIn: state.globalreducer.isLoggedIn,
-  payload: state.userReducer.payload,
-  entryPayload: state.entryReducer
+  entryPayload: state.entryReducer,
+  userPayload: state.userReducer
 });
 
-export const mapDispatchToProp = dispatch => ({
-  retrieveUserInfo: (token) => {
-    dispatch(getUserInfo(token));
-  },
-  retrieveUserEntries: (token) => {
-    dispatch(getUserEntries(token));
-  },
-  logoutUser: () => {
-    dispatch(logout());
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProp)(Index);
+export default connect(mapStateToProps, null)(index);

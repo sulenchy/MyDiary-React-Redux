@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { globalFailure } from '../../actions/globalActions';
@@ -25,6 +25,8 @@ class DashBoard extends Component {
   }
 
   componentDidMount() {
+    const history = useHistory();
+    console.log('====> ', history);
     const { failure } = this.props;
     failure({});
     this._changeTime();

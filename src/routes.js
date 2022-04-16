@@ -1,5 +1,6 @@
 import LandingPage from './components/home/LandingPage';
-import index from './components/entry/index';
+import Dashboard from './components/dashboard/index';
+import Entry from './components/entry/index';
 
 const routes = [
   {
@@ -9,7 +10,12 @@ const routes = [
   },
   {
     path: '/index',
-    component: index,
+    component: Dashboard,
+    exact: true,
+  },
+  {
+    path: '/entries',
+    component: Entry,
     exact: true,
   },
 ];

@@ -1,10 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Link, withRouter } from 'react-router-dom';
 import Icon from '../svgs';
 
-export default function Sidebar({
-  payload, isSidebarShown, handleLogout
+function Sidebar({
+  payload, isSidebarShown, logoutUser, history, toggleSidebar
 }) {
+  const handleLogout = () => {
+    history.push('/');
+    logoutUser();
+  };
+
   return ReactDOM.createPortal(
     <div
       id="mySidenav"
@@ -18,13 +24,15 @@ export default function Sidebar({
           : <Icon.Avatar className="img-center" style={{ fill: '#fff' }} />
       }
       <ul style={{ width: '100%', padding: '0' }}>
-        <li><a id="username" href="#">{payload.user ? payload.user[0].fullname : '' }</a></li>
+        <li><Link to="/" id="username" onClick={toggleSidebar}>{payload.user ? payload.user[0].fullname : '' }</Link></li>
         <li><hr /></li>
-        <li><a id="entries" href="#">Entries</a></li>
-        <li><a id="profile" href="#">User Profile</a></li>
+        <li><Link id="entries" to="/" onClick={toggleSidebar}>Home</Link></li>
+        <li><Link id="entries" to="/" onClick={toggleSidebar}>User Profile</Link></li>
         <li><a id="logout-small" href="#" className="logout" onClick={handleLogout}>Logout</a></li>
       </ul>
     </div>,
     document.getElementById('sidebar-portal')
   );
 }
+
+export default withRouter(Sidebar);

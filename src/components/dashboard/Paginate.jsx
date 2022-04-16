@@ -2,7 +2,7 @@ import React from 'react';
 
 import { paginateFunc } from '../../services/groupEntries';
 
-const Paginate = ({ WrappedComponent, itemsPerPage, entries }) => class extends React.Component {
+const Paginate = ({ WrappedComponent, itemsPerPage, entries }) => (class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -46,7 +46,7 @@ const Paginate = ({ WrappedComponent, itemsPerPage, entries }) => class extends 
               className="rounded"
               style={{ margin: '5px' }}
               onClick={() => this.handlePreviousPage()}>
-              Previous
+                  <i className="fas fa-angle-double-left" />
                 </button>
                 {
               slices.map((_, index) => (
@@ -65,7 +65,7 @@ const Paginate = ({ WrappedComponent, itemsPerPage, entries }) => class extends 
               className="rounded"
               style={{ margin: '5px' }}
               onClick={() => this.handleNextPage()}>
-              Next
+                  <i className="fas fa-angle-double-right" />
                 </button>
             </>
             }
@@ -73,6 +73,6 @@ const Paginate = ({ WrappedComponent, itemsPerPage, entries }) => class extends 
         </>
     );
   }
-};
+});
 
 export default Paginate;
